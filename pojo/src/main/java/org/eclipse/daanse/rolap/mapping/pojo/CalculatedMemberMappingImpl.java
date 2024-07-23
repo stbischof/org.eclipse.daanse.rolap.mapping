@@ -35,6 +35,8 @@ public class CalculatedMemberMappingImpl extends AbstractElementMappingImpl impl
 
     private String parent;
 
+    private boolean visible;
+
     private CalculatedMemberMappingImpl(Builder builder) {
         this.calculatedMemberProperties = builder.calculatedMemberProperties;
         this.cellFormatter = builder.cellFormatter;
@@ -44,6 +46,7 @@ public class CalculatedMemberMappingImpl extends AbstractElementMappingImpl impl
         this.hierarchy = builder.hierarchy;
         this.dimensionConector = builder.dimensionConector;
         this.parent = builder.parent;
+        this.setVisible(builder.visible);
         super.setAnnotations(builder.annotations);
         super.setId(builder.id);
         super.setDescription(builder.description);
@@ -119,6 +122,14 @@ public class CalculatedMemberMappingImpl extends AbstractElementMappingImpl impl
         return new Builder();
     }
 
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+
     public static final class Builder {
         private List<CalculatedMemberPropertyMappingImpl> calculatedMemberProperties = Collections.emptyList();
         private CellFormatterMappingImpl cellFormatter;
@@ -128,6 +139,7 @@ public class CalculatedMemberMappingImpl extends AbstractElementMappingImpl impl
         private HierarchyMappingImpl hierarchy;
         private DimensionConnectorMappingImpl dimensionConector;
         private String parent;
+        private boolean visible;
         private List<AnnotationMappingImpl> annotations = Collections.emptyList();
         private String id;
         private String description;
@@ -175,6 +187,11 @@ public class CalculatedMemberMappingImpl extends AbstractElementMappingImpl impl
 
         public Builder withParent(String parent) {
             this.parent = parent;
+            return this;
+        }
+
+        public Builder withVisible(boolean visible) {
+            this.visible = visible;
             return this;
         }
 

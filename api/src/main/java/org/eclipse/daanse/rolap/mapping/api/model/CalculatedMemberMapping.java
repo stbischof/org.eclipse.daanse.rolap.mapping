@@ -32,4 +32,6 @@ public interface CalculatedMemberMapping extends AbstractElementMapping {
 
     String getParent();
 
+    boolean isVisible();
+
 }
