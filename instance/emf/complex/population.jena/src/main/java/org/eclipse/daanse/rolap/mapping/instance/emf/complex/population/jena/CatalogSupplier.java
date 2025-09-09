@@ -28,6 +28,7 @@ import org.eclipse.daanse.rolap.mapping.emf.rolapmapping.ExplicitHierarchy;
 import org.eclipse.daanse.rolap.mapping.emf.rolapmapping.JoinQuery;
 import org.eclipse.daanse.rolap.mapping.emf.rolapmapping.JoinedQueryElement;
 import org.eclipse.daanse.rolap.mapping.emf.rolapmapping.Level;
+import org.eclipse.daanse.rolap.mapping.emf.rolapmapping.LevelDefinition;
 import org.eclipse.daanse.rolap.mapping.emf.rolapmapping.MeasureGroup;
 import org.eclipse.daanse.rolap.mapping.emf.rolapmapping.MemberProperty;
 import org.eclipse.daanse.rolap.mapping.emf.rolapmapping.PhysicalCube;
@@ -36,6 +37,7 @@ import org.eclipse.daanse.rolap.mapping.emf.rolapmapping.RolapMappingFactory;
 import org.eclipse.daanse.rolap.mapping.emf.rolapmapping.StandardDimension;
 import org.eclipse.daanse.rolap.mapping.emf.rolapmapping.SumMeasure;
 import org.eclipse.daanse.rolap.mapping.emf.rolapmapping.TableQuery;
+import org.eclipse.daanse.rolap.mapping.emf.rolapmapping.TimeDimension;
 import org.eclipse.daanse.rolap.mapping.instance.api.Kind;
 import org.eclipse.daanse.rolap.mapping.instance.api.MappingInstance;
 import org.eclipse.daanse.rolap.mapping.instance.api.Source;
@@ -65,7 +67,6 @@ public class CatalogSupplier implements CatalogMappingSupplier {
     // Static columns - Plraum Table
     public static final Column COLUMN_GID_PLRAUM;
     public static final Column COLUMN_PLRAUM_PLRAUM;
-    public static final Column COLUMN_THE_GEOM_PLRAUM;
     public static final Column COLUMN_UUID_PLRAUM;
     public static final Column COLUMN_GEOJSON_PLRAUM;
     public static final Column COLUMN_TOWNID_PLRAUM;
@@ -74,7 +75,6 @@ public class CatalogSupplier implements CatalogMappingSupplier {
     public static final Column COLUMN_GID_STATBEZ;
     public static final Column COLUMN_PLRAUM_STATBEZ;
     public static final Column COLUMN_STATBEZ_NAME_STATBEZ;
-    public static final Column COLUMN_THE_GEOM_STATBEZ;
     public static final Column COLUMN_UUID_STATBEZ;
     public static final Column COLUMN_GEOJSON_STATBEZ;
 
@@ -134,7 +134,7 @@ public class CatalogSupplier implements CatalogMappingSupplier {
     public static final ExplicitHierarchy HIERARCHY_ALTERSGRUPPEN_10JAHRE;
 
     // Static dimensions
-    public static final StandardDimension DIMENSION_JAHR;
+    public static final TimeDimension DIMENSION_JAHR;
     public static final StandardDimension DIMENSION_STATISTISCHER_BEZIRK;
     public static final StandardDimension DIMENSION_GESCHLECHT;
     public static final StandardDimension DIMENSION_ALTER;
@@ -269,11 +269,6 @@ public class CatalogSupplier implements CatalogMappingSupplier {
         COLUMN_PLRAUM_PLRAUM.setId("_column_plraum_plraum");
         COLUMN_PLRAUM_PLRAUM.setType(ColumnType.VARCHAR);
 
-        COLUMN_THE_GEOM_PLRAUM = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
-        COLUMN_THE_GEOM_PLRAUM.setName("the_geom");
-        COLUMN_THE_GEOM_PLRAUM.setId("_column_plraum_the_geom");
-        COLUMN_THE_GEOM_PLRAUM.setType(ColumnType.VARCHAR);
-
         COLUMN_UUID_PLRAUM = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
         COLUMN_UUID_PLRAUM.setName("uuid");
         COLUMN_UUID_PLRAUM.setId("_column_plraum_uuid");
@@ -304,11 +299,6 @@ public class CatalogSupplier implements CatalogMappingSupplier {
         COLUMN_STATBEZ_NAME_STATBEZ.setName("statbez_name");
         COLUMN_STATBEZ_NAME_STATBEZ.setId("_column_statbez_statbez_name");
         COLUMN_STATBEZ_NAME_STATBEZ.setType(ColumnType.VARCHAR);
-
-        COLUMN_THE_GEOM_STATBEZ = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
-        COLUMN_THE_GEOM_STATBEZ.setName("the_geom");
-        COLUMN_THE_GEOM_STATBEZ.setId("_column_statbez_the_geom");
-        COLUMN_THE_GEOM_STATBEZ.setType(ColumnType.VARCHAR);
 
         COLUMN_UUID_STATBEZ = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
         COLUMN_UUID_STATBEZ.setName("uuid");
@@ -407,14 +397,14 @@ public class CatalogSupplier implements CatalogMappingSupplier {
         TABLE_PLRAUM = RolapMappingFactory.eINSTANCE.createPhysicalTable();
         TABLE_PLRAUM.setName("plraum");
         TABLE_PLRAUM.setId("_table_plraum");
-        TABLE_PLRAUM.getColumns().addAll(List.of(COLUMN_GID_PLRAUM, COLUMN_PLRAUM_PLRAUM, COLUMN_THE_GEOM_PLRAUM,
+        TABLE_PLRAUM.getColumns().addAll(List.of(COLUMN_GID_PLRAUM, COLUMN_PLRAUM_PLRAUM,
                 COLUMN_UUID_PLRAUM, COLUMN_GEOJSON_PLRAUM, COLUMN_TOWNID_PLRAUM));
 
         TABLE_STATBEZ = RolapMappingFactory.eINSTANCE.createPhysicalTable();
         TABLE_STATBEZ.setName("statbez");
         TABLE_STATBEZ.setId("_table_statbez");
         TABLE_STATBEZ.getColumns().addAll(List.of(COLUMN_GID_STATBEZ, COLUMN_PLRAUM_STATBEZ,
-                COLUMN_STATBEZ_NAME_STATBEZ, COLUMN_THE_GEOM_STATBEZ, COLUMN_UUID_STATBEZ, COLUMN_GEOJSON_STATBEZ));
+                COLUMN_STATBEZ_NAME_STATBEZ, COLUMN_UUID_STATBEZ, COLUMN_GEOJSON_STATBEZ));
 
         TABLE_GENDER = RolapMappingFactory.eINSTANCE.createPhysicalTable();
         TABLE_GENDER.setName("gender");
@@ -435,13 +425,14 @@ public class CatalogSupplier implements CatalogMappingSupplier {
         LEVEL_JAHR.setName("Jahr");
         LEVEL_JAHR.setColumn(COLUMN_YEAR_YEAR);
         LEVEL_JAHR.setOrdinalColumn(COLUMN_ORDINAL_YEAR);
+        LEVEL_JAHR.setType(LevelDefinition.TIME_YEARS);
         LEVEL_JAHR.setId("_level_jahr");
 
         // Stadt level with GeoJson property
         LEVEL_STADT = RolapMappingFactory.eINSTANCE.createLevel();
         LEVEL_STADT.setName("Stadt");
         LEVEL_STADT.setColumn(COLUMN_NAME_TOWN);
-        LEVEL_STADT.setOrdinalColumn(COLUMN_ORDINAL_YEAR);
+        //LEVEL_STADT.setOrdinalColumn(COLUMN_ORDINAL_YEAR);
         LEVEL_STADT.setId("_level_stadt");
 
         MemberProperty geoJsonPropertyTown = RolapMappingFactory.eINSTANCE.createMemberProperty();
@@ -512,7 +503,7 @@ public class CatalogSupplier implements CatalogMappingSupplier {
         LEVEL_ALTERSGRUPPE_STANDARD.setId("_level_altersgruppe_standard");
 
         LEVEL_ALTER_STANDARD = RolapMappingFactory.eINSTANCE.createLevel();
-        LEVEL_ALTER_STANDARD.setName("Alter");
+        LEVEL_ALTER_STANDARD.setName("Alter Standard");
         LEVEL_ALTER_STANDARD.setColumn(COLUMN_AGE_AGEGROUPS);
         LEVEL_ALTER_STANDARD.setId("_level_alter_standard");
 
@@ -523,7 +514,7 @@ public class CatalogSupplier implements CatalogMappingSupplier {
         LEVEL_ALTERSGRUPPE_KINDER.setId("_level_altersgruppe_kinder");
 
         LEVEL_ALTER_KINDER = RolapMappingFactory.eINSTANCE.createLevel();
-        LEVEL_ALTER_KINDER.setName("Alter");
+        LEVEL_ALTER_KINDER.setName("Alter Kinder");
         LEVEL_ALTER_KINDER.setColumn(COLUMN_AGE_AGEGROUPS);
         LEVEL_ALTER_KINDER.setId("_level_alter_kinder");
 
@@ -534,7 +525,7 @@ public class CatalogSupplier implements CatalogMappingSupplier {
         LEVEL_ALTERSGRUPPE_RKI_H7.setId("_level_altersgruppe_rki_h7");
 
         LEVEL_ALTER_RKI_H7 = RolapMappingFactory.eINSTANCE.createLevel();
-        LEVEL_ALTER_RKI_H7.setName("Alter");
+        LEVEL_ALTER_RKI_H7.setName("Alter H7");
         LEVEL_ALTER_RKI_H7.setColumn(COLUMN_AGE_AGEGROUPS);
         LEVEL_ALTER_RKI_H7.setId("_level_alter_rki_h7");
 
@@ -545,7 +536,7 @@ public class CatalogSupplier implements CatalogMappingSupplier {
         LEVEL_ALTERSGRUPPE_RKI_H8.setId("_level_altersgruppe_rki_h8");
 
         LEVEL_ALTER_RKI_H8 = RolapMappingFactory.eINSTANCE.createLevel();
-        LEVEL_ALTER_RKI_H8.setName("Alter");
+        LEVEL_ALTER_RKI_H8.setName("Alter H8");
         LEVEL_ALTER_RKI_H8.setColumn(COLUMN_AGE_AGEGROUPS);
         LEVEL_ALTER_RKI_H8.setId("_level_alter_rki_h8");
 
@@ -556,28 +547,34 @@ public class CatalogSupplier implements CatalogMappingSupplier {
         LEVEL_ALTERSGRUPPE_10JAHRE.setId("_level_altersgruppe_10jahre");
 
         LEVEL_ALTER_10JAHRE = RolapMappingFactory.eINSTANCE.createLevel();
-        LEVEL_ALTER_10JAHRE.setName("Alter");
+        LEVEL_ALTER_10JAHRE.setName("Alter 10");
         LEVEL_ALTER_10JAHRE.setColumn(COLUMN_AGE_AGEGROUPS);
         LEVEL_ALTER_10JAHRE.setId("_level_alter_10jahre");
 
         // Initialize table queries
         TABLEQUERY_YEAR = RolapMappingFactory.eINSTANCE.createTableQuery();
         TABLEQUERY_YEAR.setTable(TABLE_YEAR);
+        TABLEQUERY_YEAR.setId("_query_year");
 
         TABLEQUERY_TOWN = RolapMappingFactory.eINSTANCE.createTableQuery();
         TABLEQUERY_TOWN.setTable(TABLE_TOWN);
+        TABLEQUERY_TOWN.setId("_query_town");
 
         TABLEQUERY_PLRAUM = RolapMappingFactory.eINSTANCE.createTableQuery();
         TABLEQUERY_PLRAUM.setTable(TABLE_PLRAUM);
+        TABLEQUERY_PLRAUM.setId("_query_plraum");
 
         TABLEQUERY_STATBEZ = RolapMappingFactory.eINSTANCE.createTableQuery();
         TABLEQUERY_STATBEZ.setTable(TABLE_STATBEZ);
+        TABLEQUERY_STATBEZ.setId("_query_statbez");
 
         TABLEQUERY_GENDER = RolapMappingFactory.eINSTANCE.createTableQuery();
         TABLEQUERY_GENDER.setTable(TABLE_GENDER);
+        TABLEQUERY_GENDER.setId("_query_gender");
 
         TABLEQUERY_AGEGROUPS = RolapMappingFactory.eINSTANCE.createTableQuery();
         TABLEQUERY_AGEGROUPS.setTable(TABLE_AGEGROUPS);
+        TABLEQUERY_AGEGROUPS.setId("_query_agegroups");
 
         TABLEQUERY_FACT = RolapMappingFactory.eINSTANCE.createTableQuery();
         TABLEQUERY_FACT.setTable(TABLE_EINWOHNER);
@@ -614,8 +611,9 @@ public class CatalogSupplier implements CatalogMappingSupplier {
         HIERARCHY_JAHR.setName("Jahr");
         HIERARCHY_JAHR.setId("_hierarchy_jahr");
         HIERARCHY_JAHR.setHasAll(false);
-        HIERARCHY_JAHR.setDefaultMember("2023");
+        HIERARCHY_JAHR.setPrimaryKey(COLUMN_YEAR_YEAR);
         HIERARCHY_JAHR.setQuery(TABLEQUERY_YEAR);
+        HIERARCHY_JAHR.setDefaultMember("2023");
         HIERARCHY_JAHR.getLevels().add(LEVEL_JAHR);
 
         HIERARCHY_STADT_PLANUNGSRAUM_STATBEZIRK = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
@@ -623,6 +621,7 @@ public class CatalogSupplier implements CatalogMappingSupplier {
         HIERARCHY_STADT_PLANUNGSRAUM_STATBEZIRK.setId("_hierarchy_stadt_planungsraum_statbezirk");
         HIERARCHY_STADT_PLANUNGSRAUM_STATBEZIRK.setHasAll(true);
         HIERARCHY_STADT_PLANUNGSRAUM_STATBEZIRK.setAllMemberName("Alle Gebiete");
+        HIERARCHY_STADT_PLANUNGSRAUM_STATBEZIRK.setPrimaryKey(COLUMN_GID_STATBEZ);
         HIERARCHY_STADT_PLANUNGSRAUM_STATBEZIRK.setQuery(JOINQUERY_STADT_PLANUNGSRAUM_STATBEZIRK);
         HIERARCHY_STADT_PLANUNGSRAUM_STATBEZIRK.getLevels()
                 .addAll(List.of(LEVEL_STADT, LEVEL_PLANUNGSRAUM, LEVEL_STATISTISCHER_BEZIRK));
@@ -632,6 +631,7 @@ public class CatalogSupplier implements CatalogMappingSupplier {
         HIERARCHY_GESCHLECHT.setId("_hierarchy_geschlecht");
         HIERARCHY_GESCHLECHT.setHasAll(true);
         HIERARCHY_GESCHLECHT.setAllMemberName("Alle Geschlechter");
+        HIERARCHY_GESCHLECHT.setPrimaryKey(COLUMN_KEY_GENDER);
         HIERARCHY_GESCHLECHT.setQuery(TABLEQUERY_GENDER);
         HIERARCHY_GESCHLECHT.getLevels().add(LEVEL_GESCHLECHT);
 
@@ -640,6 +640,8 @@ public class CatalogSupplier implements CatalogMappingSupplier {
         HIERARCHY_ALTER_EINZELJAHRGAENGE.setId("_hierarchy_alter_einzeljahrgaenge");
         HIERARCHY_ALTER_EINZELJAHRGAENGE.setHasAll(true);
         HIERARCHY_ALTER_EINZELJAHRGAENGE.setAllMemberName("Alle Altersgruppen");
+        HIERARCHY_ALTER_EINZELJAHRGAENGE.setPrimaryKey(COLUMN_AGE_AGEGROUPS);
+        HIERARCHY_ALTER_EINZELJAHRGAENGE.setQuery(TABLEQUERY_AGEGROUPS);
         HIERARCHY_ALTER_EINZELJAHRGAENGE.getLevels().add(LEVEL_ALTER_EINZELJAHRGAENGE);
 
         HIERARCHY_ALTERSGRUPPEN_STANDARD = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
@@ -647,6 +649,8 @@ public class CatalogSupplier implements CatalogMappingSupplier {
         HIERARCHY_ALTERSGRUPPEN_STANDARD.setId("_hierarchy_altersgruppen_standard");
         HIERARCHY_ALTERSGRUPPEN_STANDARD.setHasAll(true);
         HIERARCHY_ALTERSGRUPPEN_STANDARD.setAllMemberName("Alle Altersgruppen");
+        HIERARCHY_ALTERSGRUPPEN_STANDARD.setPrimaryKey(COLUMN_AGE_AGEGROUPS);
+        HIERARCHY_ALTERSGRUPPEN_STANDARD.setQuery(TABLEQUERY_AGEGROUPS);
         HIERARCHY_ALTERSGRUPPEN_STANDARD.getLevels().addAll(List.of(LEVEL_ALTERSGRUPPE_STANDARD, LEVEL_ALTER_STANDARD));
 
         HIERARCHY_ALTERSGRUPPEN_KINDER = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
@@ -654,20 +658,26 @@ public class CatalogSupplier implements CatalogMappingSupplier {
         HIERARCHY_ALTERSGRUPPEN_KINDER.setId("_hierarchy_altersgruppen_kinder");
         HIERARCHY_ALTERSGRUPPEN_KINDER.setHasAll(true);
         HIERARCHY_ALTERSGRUPPEN_KINDER.setAllMemberName("Alle Altersgruppen");
+        HIERARCHY_ALTERSGRUPPEN_KINDER.setPrimaryKey(COLUMN_AGE_AGEGROUPS);
+        HIERARCHY_ALTERSGRUPPEN_KINDER.setQuery(TABLEQUERY_AGEGROUPS);
         HIERARCHY_ALTERSGRUPPEN_KINDER.getLevels().addAll(List.of(LEVEL_ALTERSGRUPPE_KINDER, LEVEL_ALTER_KINDER));
 
         HIERARCHY_ALTERSGRUPPEN_RKI_H7 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
-        HIERARCHY_ALTERSGRUPPEN_RKI_H7.setName("Altersgruppen (Systematik RKI)");
+        HIERARCHY_ALTERSGRUPPEN_RKI_H7.setName("Altersgruppen (Systematik RKI H7)");
         HIERARCHY_ALTERSGRUPPEN_RKI_H7.setId("_hierarchy_altersgruppen_rki_h7");
         HIERARCHY_ALTERSGRUPPEN_RKI_H7.setHasAll(true);
         HIERARCHY_ALTERSGRUPPEN_RKI_H7.setAllMemberName("Alle Altersgruppen");
+        HIERARCHY_ALTERSGRUPPEN_RKI_H7.setPrimaryKey(COLUMN_AGE_AGEGROUPS);
+        HIERARCHY_ALTERSGRUPPEN_RKI_H7.setQuery(TABLEQUERY_AGEGROUPS);
         HIERARCHY_ALTERSGRUPPEN_RKI_H7.getLevels().add(LEVEL_ALTER_RKI_H7);
 
         HIERARCHY_ALTERSGRUPPEN_RKI_H8 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
-        HIERARCHY_ALTERSGRUPPEN_RKI_H8.setName("Altersgruppen (Systematik RKI)");
+        HIERARCHY_ALTERSGRUPPEN_RKI_H8.setName("Altersgruppen (Systematik RKI H8)");
         HIERARCHY_ALTERSGRUPPEN_RKI_H8.setId("_hierarchy_altersgruppen_rki_h8");
         HIERARCHY_ALTERSGRUPPEN_RKI_H8.setHasAll(true);
         HIERARCHY_ALTERSGRUPPEN_RKI_H8.setAllMemberName("Alle Altersgruppen");
+        HIERARCHY_ALTERSGRUPPEN_RKI_H8.setPrimaryKey(COLUMN_AGE_AGEGROUPS);
+        HIERARCHY_ALTERSGRUPPEN_RKI_H8.setQuery(TABLEQUERY_AGEGROUPS);
         HIERARCHY_ALTERSGRUPPEN_RKI_H8.getLevels().add(LEVEL_ALTER_RKI_H8);
 
         HIERARCHY_ALTERSGRUPPEN_10JAHRE = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
@@ -675,11 +685,12 @@ public class CatalogSupplier implements CatalogMappingSupplier {
         HIERARCHY_ALTERSGRUPPEN_10JAHRE.setId("_hierarchy_altersgruppen_10jahre");
         HIERARCHY_ALTERSGRUPPEN_10JAHRE.setHasAll(true);
         HIERARCHY_ALTERSGRUPPEN_10JAHRE.setAllMemberName("Alle Altersgruppen");
+        HIERARCHY_ALTERSGRUPPEN_10JAHRE.setPrimaryKey(COLUMN_AGE_AGEGROUPS);
         HIERARCHY_ALTERSGRUPPEN_10JAHRE.setQuery(TABLEQUERY_AGEGROUPS);
         HIERARCHY_ALTERSGRUPPEN_10JAHRE.getLevels().add(LEVEL_ALTER_10JAHRE);
 
         // Initialize dimensions
-        DIMENSION_JAHR = RolapMappingFactory.eINSTANCE.createStandardDimension();
+        DIMENSION_JAHR = RolapMappingFactory.eINSTANCE.createTimeDimension();
         DIMENSION_JAHR.setName("Jahr");
         DIMENSION_JAHR.setId("_dimension_jahr");
         DIMENSION_JAHR.getHierarchies().add(HIERARCHY_JAHR);
@@ -749,7 +760,7 @@ public class CatalogSupplier implements CatalogMappingSupplier {
         // Initialize database schema and catalog
         DATABASE_SCHEMA_POPULATION_JENA = RolapMappingFactory.eINSTANCE.createDatabaseSchema();
         DATABASE_SCHEMA_POPULATION_JENA.setId("_databaseSchema_population_jena");
-        DATABASE_SCHEMA_POPULATION_JENA.setName("population_jena");
+        //DATABASE_SCHEMA_POPULATION_JENA.setName("population_jena");
         DATABASE_SCHEMA_POPULATION_JENA.getTables().addAll(List.of(TABLE_EINWOHNER, TABLE_YEAR, TABLE_TOWN,
                 TABLE_PLRAUM, TABLE_STATBEZ, TABLE_GENDER, TABLE_AGEGROUPS));
 
